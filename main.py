@@ -41,10 +41,10 @@ def send_sms():
         mb.showerror('Ошибка!',f'Длина вашего сообщения {len(text)}. Она не может превышать 160 символов')
         return
 
-
-    balance=check_balance(user,password)
-    if balance:
-        if float(balance)>10:
+    money=check_balance(user,password)
+    balance=float(money) if money.isdigit else money
+    if isinstance(balance, float):
+        if balance>10:
 
             if not validate_phone_number(reciever):
                 mb.showinfo('Ошибка!','Некорректный номер телефона')
