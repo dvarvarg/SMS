@@ -15,10 +15,10 @@ def check_balance(login,password):
 
         if response.status_code == 200:
             response_data = response.json()
-            print(response_data)
-            print(f'Баланс: {response_data['money']} руб')
+            return response_data['money']
         else:
             print(f'Произошла ошибка: {response.status_code}')
+            return None
     except Exception as e:
         print(f'Произошла ошибка: {e}')
 
@@ -37,7 +37,7 @@ text='Hello world!'
 
 balance=check_balance(user,password)
 if balance:
-    if balance>10:
+    if float(balance)>10:
 
         if not validate_phone_number(reciever):
             print('Ошибка! Некорректный номер телефона')
