@@ -4,8 +4,6 @@ import json
 from tkinter import *
 from tkinter import messagebox as mb
 
-from Scripts.tkinter_web import window
-
 
 def check_balance(login,password):
     url = 'https://my3.webcom.mobi/json/balance.php'
@@ -18,6 +16,7 @@ def check_balance(login,password):
         response = requests.post(url, data=json.dumps(data), headers=headers)
 
         if response.status_code == 200:
+            mb.showinfo('Баланс',f'Баланс счета: {response_data['money']}')
             response_data = response.json()
             return response_data['money']
         else:
@@ -36,7 +35,11 @@ def send_sms():
     password='TCMS9L'
     sender='python2024' # отправитель
     reciever=reciever_entry.get()    #'79163439281' получатель
-    text=text_entry.get()
+    text=text_entry.get(1.0, END)
+
+    if len(text)>160:
+        mb.showerror('Ошибка!',f'Длина вашего сообщения {len(text)}. Она не может превышать 160 символов')
+        return
 
 
     balance=check_balance(user,password)
@@ -46,7 +49,7 @@ def send_sms():
             if not validate_phone_number(reciever):
                 mb.showinfo('Ошибка!','Некорректный номер телефона')
             else:
-                url=f'https://my3.webcom.mobi/sendsms.php?user={user}&pwd={password}&sadr={sender}&dadr={reciever}&text={text}'
+                url=f'https://my3.webcom.mob/sendsms.php?user={user}&pwd={password}&sadr={sender}&dadr={reciever}&text={text}'
 
                 try:
                     response=requests.get(url)
@@ -65,14 +68,14 @@ def send_sms():
 
 window=Tk()
 window.title('Отправка СМС')
-window.geometry('250x110')
+window.geometry('400x200')
 
-Label(text='Номер получателя: ').pack()
+Label(text='Номер получателя в формате 79*********: ').pack()
 reciever_entry=Entry()
 reciever_entry.pack()
 
 Label(text='Введите текст СМС ').pack()
-text_entry=Entry()
+text_entry=Text(height=6,width=30)
 text_entry.pack()
 
 send_button=Button(text='Отправить СМС',command=send_sms)
